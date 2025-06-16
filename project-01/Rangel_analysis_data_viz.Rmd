@@ -83,7 +83,7 @@ The story we can tell is understanding player preferences, knowing your audience
 ```{r, message=FALSE, warning=FALSE}
 library(tidyverse)
 
-videogameSalesDataset = read_csv("https://github.com/aalhamadani/datasets/raw/refs/heads/main/video_game_sales.csv", col_types = cols())
+videogameSalesDataset = read_csv("../data/video_game_sales.csv", col_types = cols())
 
 videogameSalesDataset
 ```
@@ -241,7 +241,6 @@ videogameSalesDatasetPerFamily %>%
     y = ""
   ) +
   theme_minimal()
-
 ```
 
 To visualize that, a chart with the best sellers per platform per genre can be constructed. We can notice that **PlayStation** and **Xbox** are clearly mutually exclusive competitors, while other platforms may take advantage of the fact and sell well by focusing on other genres. *GTAV* is the second best selling game of all time, and it was clearly favored by the **PlayStation** audience.
