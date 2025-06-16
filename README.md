@@ -1,31 +1,27 @@
 # Data Visualization and Reproducible Research
 
-> Firstname Lastname. 
+> Jessica Rangel <p> Florida Polytechnic University Summer A 2025</p>
 
 
 The following is a sample of products created during the _"Data Visualization and Reproducible Research"_ course.
 
 
-## Project 01
+## Project 01 - Video Game Sales
 
-In the `project_01/` folder you can find... _[add short description of your revised project here]_
-
-**Sample data visualization:** 
-
-_[include your favorite visualization from this project here]_
-<img src="https://raw.githubusercontent.com/aalhamadani/dataviz_final_project/main/figures/echarts.png" width="70%" height="70%">
-
-
-## Project 02
-
-In this project, I explored ... _[short description of your revised project goes here]_ Find the code and report in the `project_02/` folder.
+In the `project_01/` folder you can find data visualizations exploring the "Video Game Sales" dataset, where we look at numbers per console family, genre, and regional preferences.
 
 **Sample data visualization:** 
 
-_[include your favorite visualization from this project here]_
-<img src="https://raw.githubusercontent.com/aalhamadani/dataviz_final_project/main/figures/fl_higher_ed.png" width="80%" height="80%">
+<img src="./project-01/plot_project_01.png" width="70%" height="70%">
 
-(you can place your figures in the `figures/` folder and use the `![](path_to_picture)` option to add the pictures here)
+
+## Project 02 - Fifa 18 PLayers
+
+In this project, I explored aspects of the Fifa 18 video game's players, such as nationality, overall rating and personal statistics.
+
+**Sample data visualization:** 
+
+<img src="./project-02/plot_project_02.png"" width="80%" height="80%">
 
 
 ## Project 03

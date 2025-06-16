@@ -1,0 +1,336 @@
+---
+title: "Data Visualization Mini Project 02"
+author: "Jessica Rangel `jdesouzarangel7235@floridapoly.edu`"
+date: "2025-06-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(plotly)
+library(sf)
+```
+
+# Introduction
+
+I explored the dataset to understand the distribution of players, their ratings, and how various attributes contribute to a player's overall rating. We used a combination of tidyverse, sf, plotly, and modeling libraries in R.
+
+Initially, the goal was to create the following visualizations:
+
+**Interactive Plot:** Scatter plot of Actual vs. Predicted Overall Ratings, with player-specific hover info.
+
+**Spatial Visualization:** World map showing average player rating per country.
+
+**Model Visualization:** Coefficients plot of a linear regression model predicting overall from player attributes.
+
+I had some difficulties making the predictor and standardizing it, as well as making the graphs informative but not cluttered.
+
+## Data import
+
+```{r data}
+# Load required packages
+library(tidyverse)
+library(sf)
+library(plotly)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(ggthemes)
+
+# Read the dataset
+fifa18 <- read_csv("./fifa18.csv")
+
+# Display the data
+fifa18
+```
+
+# Data Investigation
+
+## Which countries invest more in this sport?
+
+By analyzing the player's nationalities, we can begin to see which countries invest more in soccer. If the population is more interested, they might tend to invest more and inspire more to play in a professional capacity.
+
+**Data Preparation**
+
+- Player nationality data was extracted from the fifa18 dataset.
+
+- A count of players was computed for each nationality.
+
+- A world map shapefile was loaded using the rnaturalearth package.
+
+- The player counts were joined to the map data by matching the country names in both datasets.
+
+- Missing values were replaced with 0.
+
+
+**Visualization**
+
+Countries are color filled based on the number of players using a square-root transformation to improve visual differentiation. The tooltip indicates country and number of players.
+
+
+**Interpretation**
+
+The resulting map shows which countries have the highest number of FIFA 18 players.
+
+As we can see, Brazil, Germany, Argentina, Spain, and France seem to among the countries with more players. This was predictable, as they are well known for soccer as a dominant sport in their cultures.
+
+```{r}
+################################################################################
+# Data preparation
+################################################################################
+
+# Count players by nationality
+player_counts = fifa18 %>%
+  count(nationality, name = "num_players")
+
+# Load world map
+world = ne_countries(scale = "medium", returnclass = "sf")
+
+# Join player counts with world map by matching nationality to map's name column
+world_players = world %>%
+  left_join(player_counts, by = c("name" = "nationality"))
+
+# Replace NAs with 0
+world_players$num_players[is.na(world_players$num_players)] = 0
+
+################################################################################
+# Plot
+################################################################################
+
+numberOfPlayersPerCountryPlot = ggplot(world_players) +
+  geom_sf(aes(fill = num_players,
+              text = paste(name,
+                           "<br>Players:", num_players)),
+          color = "darkgray") +
+  scale_fill_viridis_c(option = "D", trans = "sqrt", na.value = "darkgray") +
+  labs(
+    title = "Number of FIFA 18 Players by Country",
+    fill = "Player Count"
+  ) +
+  theme_minimal()
+
+# Display plot
+ggplotly(numberOfPlayersPerCountryPlot, tooltip = "text")
+```
+
+
+# Where are the top players from?
+
+Countries like Argentina, Germany, Spain, and Brazil stand out, predictably, but some other countries like Algeria and Egypt also have top performing players.
+
+**Objective**
+
+Find the average overall rating of soccer players by nationality.
+
+**Data Preparation**
+
+- Group by nationality.
+- To prevent skewed results, only nationalities with at least 5 players were included.
+- Calculate the mean overall rating for each nationality.
+
+**Visualization**
+
+A map shows countries shaded according to the average player rating. The tooltip shows the country name and average player rating.
+
+**Interpretation**
+
+Countries with a higher average player rating (like Spain, Germany, and Argentina) are highlighted. These mostly match the number of players, indicating that they not only have a high number of players, but specifically a high number of talented players.
+
+```{r}
+################################################################################
+# Data
+################################################################################
+# Compute average player rating by nationality (only if more than a few players)
+avg_rating_by_country = fifa18 %>%
+  group_by(nationality) %>%
+  filter(n() >= 5) %>%  # Filter to avoid skewed averages for small countries - we want more than 5 players
+  summarize(avg_overall = mean(overall, na.rm = TRUE))
+
+# Load world map
+world_shapes = ne_countries(scale = "medium", returnclass = "sf")
+
+# Join world map with average ratings
+world_ratings = world_shapes %>%
+  left_join(avg_rating_by_country, by = c("name" = "nationality"))
+
+################################################################################
+# Plot
+################################################################################
+
+averageRatingByCountryPlot = ggplot() +
+  geom_sf(data = world_ratings, aes(fill = avg_overall,
+                                    text = paste0(name, "<br>Avg Rating: ", round(avg_overall, 1))),
+          color = "darkgray", size = 0.1) +
+  scale_fill_viridis_c(option = "D", na.value = "darkgray", name = "Avg Rating") +
+  labs(
+    title = "Average Overall Rating of Players by Country (FIFA 18)",
+    x = NULL, y = NULL
+  ) +
+  theme_minimal()
+
+ggplotly(averageRatingByCountryPlot, tooltip = "text")
+```
+
+
+# Can we predict a player's rating by some performance attributes?
+
+I tried fitting a linear regression model to predict a player’s overall rating based on selected performance attributes.
+
+Likely top predictors would be potential, reactions, composure.
+
+**Objective**
+
+The goal is to understand the influence of some skills on a player's overall rating using a linear regression approach.
+
+**Data Preparation**
+
+- Target: overall
+- Predictors: potential, dribbling, shot_power, short_passing, composure, reactions, stamina, strength
+- predictor variables were standardized for comparison of coefficient magnitudes.
+- broom::tidy() function was used to organize model output.
+
+**Interpretation**
+
+Reactions, potential, and composure seem to be key drivers. This insight can be useful for player development analysis.
+
+```{r}
+################################################################################
+# Data
+################################################################################
+
+# Select predictors and response, then drop missing values
+fifa_model_data = fifa18 %>%
+  select(overall, potential, dribbling, shot_power, short_passing,
+         composure, reactions, stamina, strength) %>%
+  drop_na()
+
+# Standardize predictors (but not the response variable)
+fifa_model_scaled = fifa_model_data %>%
+  mutate(across(-overall, scale))
+
+# Fit the linear model with standardized predictors
+model = lm(overall ~ ., data = fifa_model_scaled)
+
+# Tidy model output
+model_summary <- broom::tidy(model)
+
+################################################################################
+# Plot
+################################################################################
+
+# Plot coefficients
+ggplot(model_summary, aes(x = reorder(term, estimate), y = estimate)) +
+  geom_point(size = 3, color = "steelblue") +
+  geom_errorbar(aes(ymin = estimate - std.error, ymax = estimate + std.error),
+                width = 0.2, color = "darkgray") +
+  coord_flip() +
+  labs(
+    title = "Predictor Coefficients for Player Overall Rating",
+    x = NULL,
+    y = "Coefficient Estimate"
+  ) +
+  theme_minimal()
+```
+
+**Objective**
+
+We will try to evaluate the performance of the model by comparing predicted player overall ratings to their actual ratings in the FIFA 18 dataset.
+
+**Interpretation**
+
+The points closely clustering around the diagonal line suggest that the model performs reasonably well in predicting overall ratings. Some dispersion is visible. The plot indicates that the  model is a decent estimator of player ratings using core skill attributes, though there remains some room for refinement. The interactive format makes it easier to inspect a particular player's rating.
+
+
+```{r}
+################################################################################
+# Data
+################################################################################
+
+# Select variables and drop NAs
+fifa_model_data <- fifa18 %>%
+  select(overall, potential, dribbling, shot_power, short_passing,
+         composure, reactions, stamina, strength) %>%
+  drop_na()
+
+# Standardize predictors (but not the response)
+fifa_model_scaled <- fifa_model_data %>%
+  mutate(across(-overall, scale))
+
+# Fit model
+model <- lm(overall ~ ., data = fifa_model_scaled)
+
+# Add predictions
+fifa_predictions <- fifa_model_scaled %>%
+  mutate(predicted_overall = predict(model, newdata = fifa_model_scaled))
+
+# Select variables and drop missing values
+fifa_model_data <- fifa18 %>%
+  select(name, nationality, overall, potential, dribbling, shot_power, short_passing,
+         composure, reactions, stamina, strength) %>%
+  drop_na()
+
+# Standardize predictor variables only
+fifa_model_scaled <- fifa_model_data %>%
+  mutate(across(c(potential, dribbling, shot_power, short_passing,
+                  composure, reactions, stamina, strength), scale))
+
+# Fit the model
+model <- lm(overall ~ potential + dribbling + shot_power + short_passing +
+              composure + reactions + stamina + strength,
+            data = fifa_model_scaled)
+
+# Add predictions
+fifa_predictions <- fifa_model_scaled %>%
+  mutate(predicted_overall = predict(model, newdata = fifa_model_scaled))
+
+################################################################################
+# Plot
+################################################################################
+
+# Predicted vs Actual, colored by nationality
+plot_ly(
+  data = fifa_predictions,
+  x = ~overall,
+  y = ~predicted_overall,
+  type = "scatter",
+  mode = "markers",
+  marker = list(  color = "#1F968B", opacity = 0.3, size = 7),
+  text = ~paste(
+    "Name:", name,
+    "<br>Nationality:", nationality,
+    "<br>Actual:", overall,
+    "<br>Predicted:", round(predicted_overall, 1)
+  ),
+  hoverinfo = "text"
+) %>%
+  layout(
+    title = "Predicted vs Actual Overall Ratings (FIFA 18)<br><sub>Colored by Nationality</sub>",
+    xaxis = list(title = "Actual"),
+    yaxis = list(title = "Predicted"),
+    shapes = list(
+      list(
+        type = "line",
+        x0 = min(fifa_predictions$overall),
+        x1 = max(fifa_predictions$overall),
+        y0 = min(fifa_predictions$overall),
+        y1 = max(fifa_predictions$overall),
+        line = list(dash = "dash", color = "#481567")
+      )
+    ),
+    annotations = list(
+    list(
+      x = 93,
+      y = 94,
+      text = "Top Player",
+      showarrow = TRUE,
+      arrowhead = 2,
+      ax = -50,
+      ay = -40,
+      font = list(color = "white", size = 12),
+      bgcolor = "#1F968B",
+      bordercolor = "gray",
+      borderwidth = 1
+    )
+  )
+  )
+```
+
