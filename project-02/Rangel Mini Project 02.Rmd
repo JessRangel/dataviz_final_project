@@ -45,7 +45,7 @@ library(rnaturalearthdata)
 library(ggthemes)
 
 # Read the dataset
-fifa18 <- read_csv("./fifa18.csv")
+fifa18 <- read_csv("../data/fifa18.csv")
 
 # Display the data
 fifa18
