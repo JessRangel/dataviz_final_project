@@ -13,6 +13,7 @@ In the `project_01/` folder you can find data visualizations exploring the "Vide
 Analyzing sales data offers valuable insights into market trends, consumer preferences, and the impact of various factors on game performance. 
 
 **Data:**
+
 - Name
 - Platform
 - Year
@@ -25,6 +26,7 @@ Analyzing sales data offers valuable insights into market trends, consumer prefe
 - Global_Sales
 
 **Findings:**
+
 - Xbox and PlayStation focusing more on **Shooter**, **Action**, and **Sports** makes them direct competitors; therefore a gamer who owns one console family will likely not buy the other.
 - Nintendo leading in more genres such as **Platform** and **Racing**. Because of a different focus, they may attract the same gamers that will either own PlayStation or Xbox as well.
 - Certain successful games/genres like are exclusive to PC, likely because of the reliance on keyboard and mouse rather than being able to port to controller usage.
@@ -46,6 +48,7 @@ The FIFA series by EA Sports is renowned for its realistic simulation of soccer,
 This dataset serves as a valuable resource for analyzing player attributes, understanding the virtual representation of the sport's talent and understanding scoring metrics.
 
 **Data:**
+
 - Personal Information: Name, nationality, club, age
 - Performance Ratings
 - Physical and Technical Attributes: Acceleration, agility, balance, etc
@@ -53,6 +56,7 @@ This dataset serves as a valuable resource for analyzing player attributes, unde
 - Preferred Positions
 
 **Findings:**
+
 - Brazil, Germany, Argentina, Spain, and France seem to among the countries with more players. This was predictable, as they are well known for soccer as a dominant sport in their cultures.
 - Countries with more players tend to have players with better ratings. This could indicate their commitment to investing in quality talent. However, this is not a rule, as there are countries with few players and top talent.
 - Top talent tends to have higher overall ratings based on some core attributes.
