@@ -29,10 +29,10 @@ sample_n(weather_tpa, 4)
 ## # A tibble: 4 × 7
 ##    year month   day precipitation max_temp min_temp ave_temp
 ##   <dbl> <dbl> <dbl>         <dbl>    <dbl>    <dbl>    <dbl>
-## 1  2022     1     8             0       81       58     69.5
-## 2  2022    10    20             0       73       49     61  
-## 3  2022     5    18             0       91       76     83.5
-## 4  2022     1    10             0       81       64     72.5
+## 1  2022     8     7          0.24       96       78     87  
+## 2  2022     1    10          0          81       64     72.5
+## 3  2022    11    10          2.46       74       67     70.5
+## 4  2022     3    23          0          87       73     80
 ```
 
 See Slides from Week 4 of Visualizing Relationships and Models (slide 10) for a reminder on how to use this type of dataset with the `lubridate` package for dates and times (example included in the slides uses data from 2016).
@@ -291,6 +291,7 @@ ggplot(new_concrete, aes(x = strength_range, y = Water, fill = strength_range)) 
 ```
 
 ![](Rangel_project_03_files/figure-html/unnamed-chunk-12-2.png)<!-- -->
+
 The water content seems to be inversely proportional to strength.
 
 
@@ -348,17 +349,24 @@ Higher levels are associated with higher strength ranges, also correlating with 
 ###############################################################
 # Concrete Boxplot
 ###############################################################
+
+# Remove NA values
+new_concrete <- new_concrete %>% filter(!is.na(strength_range))
+
 ggplot(new_concrete, aes(x = factor(Age), y = Concrete_compressive_strength, fill = strength_range)) +
-  geom_boxplot() +
-  labs(x = "Age (days)", y = "Compressive Strength (MPa)", 
-       title = "Concrete Compressive Strength by Age and Strength Range") +
+  geom_boxplot(na.rm=TRUE) +
+  labs(x = "Age (days)",
+       y = "Compressive Strength (MPa)", 
+       fill = "Strength Range",
+       title = "Concrete Compressive Strength by Age and Strength Range",
+       color = "Strength Range") +
   theme_minimal()
 ```
 
 ![](Rangel_project_03_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
 
 - Compressive strength tends to increase with age, as the curing and hardening process happens.
-
+- Newer concrete seems to have more variability, indicating possible differences in composition.
 
 3. Create a scatterplot similar to the one shown below. Pay special attention to which variables are being mapped to specific aesthetics of the plot. Comment on your results. 
 

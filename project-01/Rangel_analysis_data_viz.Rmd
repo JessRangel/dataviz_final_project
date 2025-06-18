@@ -1,9 +1,11 @@
 ---
 title: "Data Visualization - Mini-Project 1"
 author: "Jessica Rangel `jdesouzarangel7235@floridapoly.edu`"
-output:
+output: 
   html_document:
-    df_print: paged
+    keep_md: true
+    toc: true
+    toc_float: true
 ---
 
 --- 

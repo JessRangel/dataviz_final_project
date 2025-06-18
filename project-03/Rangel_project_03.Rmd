@@ -246,6 +246,7 @@ ggplot(new_concrete, aes(x = strength_range, y = Water, fill = strength_range)) 
   theme(legend.position = "none")
 
 ```
+
 The water content seems to be inversely proportional to strength.
 
 
@@ -295,15 +296,22 @@ knitr::include_graphics("https://raw.githubusercontent.com/aalhamadani/dataviz_f
 ###############################################################
 # Concrete Boxplot
 ###############################################################
+
+# Remove NA values
+new_concrete <- new_concrete %>% filter(!is.na(strength_range))
+
 ggplot(new_concrete, aes(x = factor(Age), y = Concrete_compressive_strength, fill = strength_range)) +
-  geom_boxplot() +
-  labs(x = "Age (days)", y = "Compressive Strength (MPa)", 
-       title = "Concrete Compressive Strength by Age and Strength Range") +
+  geom_boxplot(na.rm=TRUE) +
+  labs(x = "Age (days)",
+       y = "Compressive Strength (MPa)", 
+       fill = "Strength Range",
+       title = "Concrete Compressive Strength by Age and Strength Range",
+       color = "Strength Range") +
   theme_minimal()
 ```
 
 - Compressive strength tends to increase with age, as the curing and hardening process happens.
-
+- Newer concrete seems to have more variability, indicating possible differences in composition.
 
 3. Create a scatterplot similar to the one shown below. Pay special attention to which variables are being mapped to specific aesthetics of the plot. Comment on your results. 
 

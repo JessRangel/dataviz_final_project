@@ -2,7 +2,11 @@
 title: "Data Visualization Mini Project 02"
 author: "Jessica Rangel `jdesouzarangel7235@floridapoly.edu`"
 date: "2025-06-07"
-output: html_document
+output: 
+  html_document:
+    keep_md: true
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
@@ -14,6 +18,10 @@ library(sf)
 # Introduction
 
 I explored the dataset to understand the distribution of players, their ratings, and how various attributes contribute to a player's overall rating. We used a combination of tidyverse, sf, plotly, and modeling libraries in R.
+
+When we think of top players in FIFA 18, stars like Messi, Ronaldo, and Neymar instantly come to mind. But what if some of the most efficient and underrated talents are buried deep in the dataset?
+
+I wanted to understand the correlation between players and their stats. Certain countries have a fame for soccer - do they consistently produce good players or are there just lucky outliers? Does it show that they care and invest more about the sport? Do top players have consistently the same ratings? What makes a good rating?
 
 Initially, the goal was to create the following visualizations:
 
@@ -47,7 +55,7 @@ fifa18
 
 ## Which countries invest more in this sport?
 
-By analyzing the player's nationalities, we can begin to see which countries invest more in soccer. If the population is more interested, they might tend to invest more and inspire more to play in a professional capacity.
+When analyzing the FIFA 18 player dataset, one way to gauge a country's investment in soccer is by looking at both the quantity and quality of players it produces. Countries like Spain, Germany, Brazil, and France stand out not only for having a high number of registered players in the game but also for their consistently high average player ratings. Does higher investment translate into top talent?
 
 **Data Preparation**
 
@@ -115,7 +123,7 @@ ggplotly(numberOfPlayersPerCountryPlot, tooltip = "text")
 
 # Where are the top players from?
 
-Countries like Argentina, Germany, Spain, and Brazil stand out, predictably, but some other countries like Algeria and Egypt also have top performing players.
+Countries like Argentina, Germany, Spain, and Brazil stand out, predictably, but some other countries like Algeria and Egypt also have top performing players. Elite talent tends to cluster, especially in countries with long-standing tradition of excellence in the sport. Argentina and Portugal, for example, are home to global icons like Lionel Messi and Cristiano Ronaldo, who were among the highest-rated players in the game. Germany, Spain, Brazil, and France also feature prominently, each contributing top-tier players across various positions — from attackers to goalkeepers. This concentration reflects not just individual brilliance but the strength of national soccer that consistently produce world-class talent. A high number of players combined with high average ratings shows that these countries consistently produce and invest in top-talent. Yet we do see excellent players emerging in countries with less tradition, such as Egypt and Algeria as well.
 
 **Objective**
 
@@ -174,6 +182,8 @@ ggplotly(averageRatingByCountryPlot, tooltip = "text")
 # Can we predict a player's rating by some performance attributes?
 
 I tried fitting a linear regression model to predict a player’s overall rating based on selected performance attributes.
+
+How can a player’s overall rating can be predicted based on their individual performance attributes? Pace, shooting, passing, dribbling, defending, and physicality are detailed in the dataset and often correlate with a player's effectiveness.
 
 Likely top predictors would be potential, reactions, composure.
 
